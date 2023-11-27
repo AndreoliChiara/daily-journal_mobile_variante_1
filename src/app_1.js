@@ -103,6 +103,9 @@ async function readQuestion(question) {
 }
 
 // Cliccando il pulsante appare la domanda
+// ...
+
+// Cliccando il pulsante appare la domanda
 button.addEventListener("click", function () {
     // Verifica se ci sono ancora domande disponibili
     if (questionIndex < questions.length) {
@@ -129,18 +132,57 @@ button.addEventListener("click", function () {
 
         // Cambia il testo del pulsante per la prossima sessione
         button.textContent = "Read Question";
-        // Attendi 5 secondi e poi chiudi la finestra
-        setTimeout(() => {
-            try {
-                window.opener = null;
-                window.open("", "_self");
-                window.close();
-            } catch (e) {
-                console.error("Error closing window:", e);
-            }
-        }, 5000);
     }
 });
+
+// Trasforma la voce in testo
+clickToRecordButton.addEventListener('click', function () {
+    const speech = true;
+    window.SpeechRecognition = window.webkitSpeechRecognition;
+
+    const recognition = new SpeechRecognition();
+    recognition.interimResults = true;
+
+    recognition.addEventListener('result', e => {
+        const transcript = Array.from(e.results)
+            .map(result => result[0])
+            .map(result => result.transcript)
+            .join('');
+
+        document.getElementById("convert_text").textContent = transcript;
+
+        // Aggiorna la variabile della risposta corrente
+        rispostaCorrente = transcript;
+
+        console.log(transcript);
+    });
+
+    // Salva risposta quando finisci di parlare.
+    recognition.addEventListener('end', function () {
+        // Chiamata alla funzione per salvare la risposta solo quando l'utente ha finito di parlare
+        salvaRisposta();
+
+        // Chiudi la finestra dopo 5 secondi quando l'ultima frase è stata letta completamente
+        if (questionIndex === questions.length) {
+            setTimeout(() => {
+                try {
+                    window.opener = null;
+                    window.open("", "_self");
+                    window.close();
+                } catch (e) {
+                    console.error("Error closing window:", e);
+                }
+            }, 5000);
+        }
+    });
+
+    if (speech == true) {
+        recognition.start();
+    }
+});
+
+// ...
+
 
 
 
