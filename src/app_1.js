@@ -129,15 +129,6 @@ button.addEventListener("click", function () {
 
         // Cambia il testo del pulsante per la prossima sessione
         button.textContent = "Read Question";
-        // Attendi 10 secondi e poi chiudi la finestra
-        setTimeout(() => {
-            try {
-                window.open('', '_self', ''); // Required for some browsers
-                window.close();
-            } catch (e) {
-                console.error("Error closing window:", e);
-            }
-        }, 5000);
     }
 });
 
