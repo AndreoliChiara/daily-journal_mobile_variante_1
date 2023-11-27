@@ -85,21 +85,22 @@ async function readQuestion(question) {
         audio.onended = () => {
             // Gestisci la fine se necessario
             clickToRecordButton.click();
-            // Chiudi la finestra dopo 3 secondi
-            setTimeout(() => {
-                try {
-                    window.open('', '_self', ''); // Required for some browsers
-                    window.close();
-                } catch (e) {
-                    console.error("Error closing window:", e);
-                }
-            }, 3000);
+
+            // Se è l'ultima frase, chiudi la finestra dopo 3 secondi
+            if (questionIndex === questions.length) {
+                setTimeout(() => {
+                    try {
+                        window.open('', '_self', ''); // Required for some browsers
+                        window.close();
+                    } catch (e) {
+                        console.error("Error closing window:", e);
+                    }
+                }, 3000);
+            }
         };
-            
     } catch (error) {
         console.error("Error in ElevenLabs TTS API request:", error.message);
     }
-
 }
 
 // Cliccando il pulsante appare la domanda
