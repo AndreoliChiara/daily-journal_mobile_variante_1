@@ -47,57 +47,59 @@ function typeQuestion(question, element, index = 0) {
 
 // Funzione per leggere una domanda dall'AI
 async function readQuestion(question) {
-    const text = question;
-    const voiceId = "I5ANhMcPbMpJJNCGKeAx";
-
-    const headers = new Headers();
-    headers.append("Accept", "audio/mpeg");
-    headers.append("xi-api-key", elevenLabsApiKey);
-    headers.append("Content-Type", "application/json");
-
-    const body = JSON.stringify({
-        text: text,
-        model_id: "eleven_monolingual_v1",
-        voice_settings: {
-            stability: 0.5,
-            similarity_boost: 0.5,
-        },
-    });
-
-    try {
-        const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream`, {
-            method: "POST",
-            headers: headers,
-            body: body,
+    async function readQuestion(question) {
+        const text = question;
+        const voiceId = "I5ANhMcPbMpJJNCGKeAx";
+        let audio;  // Sposta la dichiarazione della variabile audio all'esterno del blocco try
+    
+        const headers = new Headers();
+        headers.append("Accept", "audio/mpeg");
+        headers.append("xi-api-key", elevenLabsApiKey);
+        headers.append("Content-Type", "application/json");
+    
+        const body = JSON.stringify({
+            text: text,
+            model_id: "eleven_monolingual_v1",
+            voice_settings: {
+                stability: 0.5,
+                similarity_boost: 0.5,
+            },
         });
-
-        if (!response.ok) {
-            console.error(`Error: ${response.status} - ${response.statusText}`);
-            const responseText = await response.text();
-            console.error("Response Text:", responseText);
-            throw new Error("Text to Speech API request failed");
-        }
-
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const audio = new Audio(url);
-        audio.play();
-        audio.onended = () => {
-            // Gestisci la fine se necessario
-            clickToRecordButton.click();
-
-            // Verifica se è l'ultima frase desiderata, quindi chiudi la finestra
-            if (questionIndex === questions.length && question === "Okay, I archived your replies. Thank you and good night") {
-                setTimeout(() => {
-                    try {
-                        window.open('', '_self', ''); // Required for some browsers
-                        window.close();
-                    } catch (e) {
-                        console.error("Error closing window:", e);
-                    }
-                }, 3000); // Chiudi dopo 3 secondi
+    
+        try {
+            const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream`, {
+                method: "POST",
+                headers: headers,
+                body: body,
+            });
+    
+            if (!response.ok) {
+                console.error(`Error: ${response.status} - ${response.statusText}`);
+                const responseText = await response.text();
+                console.error("Response Text:", responseText);
+                throw new Error("Text to Speech API request failed");
             }
-        };
+    
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            audio = new Audio(url);
+            audio.play();
+            audio.onended = () => {
+                // Gestisci la fine se necessario
+                clickToRecordButton.click();
+    
+                // Verifica se è l'ultima frase desiderata, quindi chiudi la finestra
+                if (questionIndex === questions.length && question === "Okay, I archived your replies. Thank you and good night") {
+                    setTimeout(() => {
+                        try {
+                            window.open('', '_self', ''); // Required for some browsers
+                            window.close();
+                        } catch (e) {
+                            console.error("Error closing window:", e);
+                        }
+                    }, 3000); // Chiudi dopo 3 secondi
+                }
+            };
     } catch (error) {
         console.error("Error in ElevenLabs TTS API request:", error.message);
     }
