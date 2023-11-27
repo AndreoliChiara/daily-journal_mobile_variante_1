@@ -137,7 +137,7 @@ button.addEventListener("click", function () {
             } catch (e) {
                 console.error("Error closing window:", e);
             }
-        }, 10000);
+        }, 5000);
     }
 });
 
