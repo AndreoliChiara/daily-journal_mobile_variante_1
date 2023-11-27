@@ -49,7 +49,6 @@ function typeQuestion(question, element, index = 0) {
 async function readQuestion(question) {
     const text = question;
     const voiceId = "I5ANhMcPbMpJJNCGKeAx";
-    let audio;  // Sposta la dichiarazione della variabile audio all'esterno del blocco try
 
     const headers = new Headers();
     headers.append("Accept", "audio/mpeg");
@@ -81,27 +80,26 @@ async function readQuestion(question) {
 
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
-        audio = new Audio(url);
+        const audio = new Audio(url);
         audio.play();
         audio.onended = () => {
             // Gestisci la fine se necessario
             clickToRecordButton.click();
-
-            // Verifica se è l'ultima frase desiderata, quindi chiudi la finestra
-            if (questionIndex === questions.length && question === "Okay, I archived your replies. Thank you and good night") {
-                setTimeout(() => {
-                    try {
-                        window.open('', '_self', ''); // Required for some browsers
-                        window.close();
-                    } catch (e) {
-                        console.error("Error closing window:", e);
-                    }
-                }, 3000); // Chiudi dopo 3 secondi
-            }
+            // Chiudi la finestra dopo 3 secondi
+            setTimeout(() => {
+                try {
+                    window.open('', '_self', ''); // Required for some browsers
+                    window.close();
+                } catch (e) {
+                    console.error("Error closing window:", e);
+                }
+            }, 3000);
         };
+            
     } catch (error) {
         console.error("Error in ElevenLabs TTS API request:", error.message);
     }
+
 }
 
 // Cliccando il pulsante appare la domanda
@@ -131,6 +129,15 @@ button.addEventListener("click", function () {
 
         // Cambia il testo del pulsante per la prossima sessione
         button.textContent = "Read Question";
+        // Attendi 10 secondi e poi chiudi la finestra
+        setTimeout(() => {
+            try {
+                window.open('', '_self', ''); // Required for some browsers
+                window.close();
+            } catch (e) {
+                console.error("Error closing window:", e);
+            }
+        }, 10000);
     }
 });
 
