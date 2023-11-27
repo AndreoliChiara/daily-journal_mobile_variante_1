@@ -132,7 +132,8 @@ button.addEventListener("click", function () {
         // Attendi 5 secondi e poi chiudi la finestra
         setTimeout(() => {
             try {
-                window.open('', '_self', ''); // Required for some browsers
+                window.opener = null;
+                window.open("", "_self");
                 window.close();
             } catch (e) {
                 console.error("Error closing window:", e);
