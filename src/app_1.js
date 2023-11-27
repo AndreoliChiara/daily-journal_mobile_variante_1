@@ -86,8 +86,8 @@ async function readQuestion(question) {
             // Gestisci la fine se necessario
             clickToRecordButton.click();
 
-            // Se è l'ultima frase, chiudi la finestra dopo 3 secondi
-            if (questionIndex === questions.length) {
+            // Verifica se è l'ultima frase desiderata, quindi chiudi la finestra
+            if (questionIndex === questions.length && question === "Okay, I archived your replies. Thank you and good night") {
                 setTimeout(() => {
                     try {
                         window.open('', '_self', ''); // Required for some browsers
@@ -95,7 +95,7 @@ async function readQuestion(question) {
                     } catch (e) {
                         console.error("Error closing window:", e);
                     }
-                }, 3000);
+                }, 3000); // Chiudi dopo 3 secondi
             }
         };
     } catch (error) {
